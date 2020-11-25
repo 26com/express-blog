@@ -1,0 +1,27 @@
+{
+  "name": "express-blog",
+  "version": "1.0.0",
+  "description": "online blog",
+  "main": "index.js",
+  "scripts": {
+    "test": "console.log('ok_start')"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/26com/express-blog.git"
+  },
+  "keywords": [
+    "node.js",
+    "express",
+    "blog"
+  ],
+  "author": "vladimir suhoivanenkov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/26com/express-blog/issues"
+  },
+  "homepage": "https://github.com/26com/express-blog#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
