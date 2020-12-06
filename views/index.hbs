@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+
+<div class="wrapper">
+
+    {{> menu}}
+
+    <div class="content">
+
+        <form action="/login" method="get" class="content-item">
+            <h1>LOGIN</h1>
+            <label for="username">USER NAME</label>
+            <input type="text" name="username" value="{{user_name}}">
+            <br>
+            <br>
+            <label for="password">PASSWORD</label>
+            <input type="password" name="password" value="{{user_password}}">
+            <br>
+            <br>
+            <input type="submit" value='login in'>
+        </form>
+        <br><br>
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,6 +1,6 @@
 const {sequelize, Sequelize} = require('./index');
 
-const Articles = sequelize.define('users', {
+const Article = sequelize.define('Article', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -18,5 +18,5 @@ const Articles = sequelize.define('users', {
 });
 
 module.exports = {
-    Articles
+    Article
 };

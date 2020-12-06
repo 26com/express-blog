@@ -1,3 +1,5 @@
+const userId = 1;
+
 const db = require('../models');
 const { QueryTypes } = require('sequelize');
 
@@ -31,7 +33,12 @@ const createNew = async function(req, res, next){
 
 };
 
+const showCreateForm = function(req, res, next){
+    res.render('createForm.hbs');
+}
+
 module.exports = {
     getByUser,
-    createNew
+    createNew,
+    showCreateForm
 };

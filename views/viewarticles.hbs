@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+
+<div class="wrapper">
+
+    {{> menu}}
+
+    <div class="content">
+        
+        {{#each user_articles}}
+        <div class="content-item-article">
+            <h2>{{this.title}}</h2>
+            <p>{{this.content}}</p>
+            <span>{{this.userName}} || created at : {{this.createdAt}}</span>
+        </div>
+        {{/each}}
+
+    </div>
+
+</div>
+
+</body>
+</html>

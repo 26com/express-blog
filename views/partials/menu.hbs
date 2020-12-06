@@ -1,0 +1,29 @@
+<script>
+
+    function menuActive() {
+        const elemMenu = document.querySelector('.menu');
+        const elemContent = document.querySelector('.content');
+        elemMenu.classList.toggle('menu-active');
+        elemContent.classList.toggle('content-active');
+    }
+    function menuClose() {
+        const elemMenu = document.querySelector('.menu');
+        const elemContent = document.querySelector('.content');
+        elemMenu.classList.remove('menu-active');
+        elemContent.classList.remove('content-active');
+    }
+
+</script>
+
+<div class="menu" onmouseleave="menuClose()">
+
+    <span href="#" class="menu-btn" onclick="menuActive()">MENU</span>
+
+    <nav class="menu-list">
+        <a href="/" class="">HOME</a>
+        <a href="/adduser" class="">REGISTRATION</a>
+        <a href="/addcontent" class="">ADD ARTICLE</a>
+        <a href="/viewarticles" class="">VIEW ARTICLES</a>
+    </nav>
+
+</div>

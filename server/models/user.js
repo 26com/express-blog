@@ -1,6 +1,7 @@
 const {sequelize, Sequelize} = require('./index');
+const {Article} = require('./article');
 
-const User = sequelize.define('user', {
+const User = sequelize.define('User', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,

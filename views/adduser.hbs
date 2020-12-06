@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+
+<div class="wrapper">
+
+    {{> menu}}
+
+    <div class="content">
+
+        <form action="/adduser" method="post" class='content-item'>
+
+            <h1>REGISTRATION</h1>
+            <label for="username">USER NAME</label>
+            <input type="text" name="username" 
+            placeholder="{{name_message}}" 
+            value="{{user_name}}">
+            <br>
+            <br>
+            <label for="email">EMAIL</label>
+            <input type="text" name="email" 
+            placeholder="{{email_message}}" 
+            value="{{user_email}}">
+            <br>
+            <br>
+            <label for="password">PASSWORD</label>
+            <input type="password" name="password" 
+            placeholder='{{password_message}}'
+            value="{{user_password}}">
+            <br>
+            <br>
+            <label for="password">REPEAT PASSWORD</label>
+            <input type="password" name="repeatpassword" 
+            placeholder="{{repeatpassword_message}}">
+            <br>
+            <br>
+            <input type="submit" value='register'>
+
+        </form>
+    
+    </div>
+</div>
+
+
+</body>
+</html>
