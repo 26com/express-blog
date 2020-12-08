@@ -1,19 +1,27 @@
-const {sequelize, Sequelize} = require('./index');
+const {sequelize, DataTypes, Sequelize} = require('./index');
 
-const Article = sequelize.define('Article', {
+const Article = sequelize.define('article', {
     id: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false
     },
     title: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    content: {
+        type: DataTypes.STRING,
         allowNull: false
     },
     userId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.NOW
     }
 });
 

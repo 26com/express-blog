@@ -4,23 +4,22 @@ console.log(process.env.DB_NAME,
     process.env.DB_USER,
     process.env.DB_PASSWORD);
 
-const Sequelize = require('sequelize');
+const {Sequelize, DataTypes} = require('sequelize');
 const sequelize = new Sequelize(
     process.env.DB_NAME,
     process.env.DB_USER,
     process.env.DB_PASSWORD,
     {
         dialect: 'postgres',
-        define: {timestamp: true} 
+        define: {timestamps: false} 
     }
 );
 
 module.exports = {
     sequelize,
-    Sequelize
+    Sequelize,
+    DataTypes
 };
 
 require('./article');
 require('./user');
-
-sequelize.sync().then(() => console.log('---- ok sync ----')).catch(err => console.log(err));
