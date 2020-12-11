@@ -15,13 +15,13 @@ const Article = sequelize.define('article', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
     userId: {
         type: DataTypes.INTEGER,
         allowNull: false
-    },
-    createdAt: {
-        type: DataTypes.DATE,
-        defaultValue: Sequelize.NOW
     }
 });
 

@@ -13,6 +13,8 @@
         elemContent.classList.remove('content-active');
     }
 
+    const userId = 1;
+
 </script>
 
 <div class="menu" onmouseleave="menuClose()">
@@ -20,10 +22,12 @@
     <span href="#" class="menu-btn" onclick="menuActive()">MENU</span>
 
     <nav class="menu-list">
-        <a href="/" class="">HOME</a>
-        <a href="/adduser" class="">REGISTRATION</a>
-        <a href="/addcontent" class="">ADD ARTICLE</a>
-        <a href="/viewarticles" class="">VIEW ARTICLES</a>
+
+        {{!-- <a href="/" class="">HOME</a>
+        <a href="/adduser" class="">REGISTRATION</a> --}}
+
+        <a href="/articles/create" class="">ADD ARTICLE</a>
+        <a href="/articles/search" class="">VIEW ARTICLES</a>
     </nav>
 
 </div>

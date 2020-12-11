@@ -3,9 +3,9 @@ const {articles} = require('../controllers');
 const express = require('express');
 const router = express.Router();
 
-router.get('/', articles.showCreateForm);
-router.post('/', articles.createNew);
-router.use('/:id', articles.getByUser);
+router.get('/create', articles.showCreateForm);
+router.get('/search', articles.getByUser);
+router.post('/create', articles.createNew);
 
 module.exports = {
     router

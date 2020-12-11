@@ -9,7 +9,6 @@ const urlEncodedParser = bodyParser.urlencoded({extended: false});
 const hbs = require('hbs');
 app.set('view engine', 'hbs');
 app.use(Express.static(__dirname + '/../../public'));
-console.log(__dirname);
 hbs.registerPartials(__dirname + '/../../views/partials');
 
 app.use(urlEncodedParser);

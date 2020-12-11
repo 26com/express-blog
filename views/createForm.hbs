@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
 
@@ -11,7 +11,7 @@
 
     <div class="content">
 
-        <form action="/articles" method="post" class="content-item">
+        <form action="/articles/create?userId={{userId}}" method="post" class="content-item">
             <p>{{title}}{{add_message}}</p>
             <h1>ADD ARTICLE</h1>
             <label for="title">TITLE</label>
