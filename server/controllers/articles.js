@@ -1,5 +1,3 @@
-const userId = 1;
-
 const db = require('../models');
 const { QueryTypes } = require('sequelize');
 
@@ -10,14 +8,14 @@ try{
     const articles = await db.sequelize.query(
         `SELECT * FROM articles WHERE "userId" = $userId ORDER BY Id DESC`, 
     {
-        bind: {userId: userId},
+        bind: {userId: req.params.id},
         type: QueryTypes.SELECT
     });
 
     const userName = await db.sequelize.query(
         `SELECT name FROM users WHERE id = $userId`, 
         {
-            bind: {userId: userId},
+            bind: {userId: req.params.id},
             type: QueryTypes.SELECT
         });
 
@@ -33,8 +31,11 @@ try{
         elem.date = getNowDate(elem.createdAt);
     });
 
-    res.render('showArticles.hbs', {
-        user_articles: articles
+    // res.status(200).render('showArticles.hbs', {
+    //     user_articles: articles
+    // });
+    res.status(200).json({
+        articles: articles 
     });
 
 }catch(err){
@@ -47,20 +48,23 @@ const createNew = async function(req, res, next){
 
     try{
 
-    const response = await db.sequelize.query(
+    await db.sequelize.query(
         `INSERT INTO articles (title, content, "userId", "createdAt")
         VALUES($title, $content, $userId, $date)`, 
     {
         bind: {
             title: req.body.title,
             content: req.body.content,
-            userId: req.query.userId,
+            userId: req.body.userId,
             date: new Date()
         },
-        type: QueryTypes.SELECT
+        type: QueryTypes.INSERT
     });
     
-    res.status(200).render('createForm.hbs');
+    // res.status(201).render('createForm.hbs');
+    res.status(201).json({
+        massage: `Article ${req.body.title} was added`
+    });
 
     }catch(err){
         console.log(err);
@@ -68,14 +72,14 @@ const createNew = async function(req, res, next){
 
 };
 
-const showCreateForm = function(req, res, next){
-    res.render('createForm.hbs', {
-        userId: userId
-    });
-};
+// const showCreateForm = function(req, res, next){
+//     res.status(200).render('createForm.hbs', {
+//         userId: userId
+//     });
+// };
 
 module.exports = {
     getByUser,
-    createNew,
-    showCreateForm
+    createNew
+    // showCreateForm
 };
