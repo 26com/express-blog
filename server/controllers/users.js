@@ -106,8 +106,32 @@ const login = async function(req, res, next){
     }
 };
 
+const select = async function(req, res, next){
+
+    try{
+
+        const users = await db.sequelize.query(`
+            SELECT * FROM users
+        `,{
+            type: QueryTypes.SELECT
+        });
+
+        res.status(200).render('selectUser.hbs',{
+            users: users
+        });
+
+    }catch(err){
+
+        err.massage = 'Users were not selected.'
+        next(err);
+
+    }
+
+};
+
 
 module.exports = {
     login,
-    register
+    register,
+    select
 };

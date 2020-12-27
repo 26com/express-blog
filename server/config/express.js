@@ -18,7 +18,11 @@ app.use(json);
 
 app.use(cookieParser(secretKey));
 
+const hbs = require('hbs');
+app.set('view engine', 'hbs');
 app.use(Express.static(__dirname + '/../../public'));
+hbs.registerPartials(__dirname + '/../../views/partials');
+
 app.use(router);
 
 //catch an error

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" href="/css/font-awesome-4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<div class="wrapper">
+
+    {{> menu}}
+
+    <div class="content">
+
+        <form action="/users/select" method="post" class='content-item'>
+
+            {{!-- <i class="fa fa-heart" aria-hidden="true"></i> --}}
+
+            <input type="text" name="users" list="users"/>
+
+                <datalist id="users">
+                {{#each users}}
+                    <option>{{this.name}} &#9829;</option>
+                {{/each}}
+                </datalist>
+
+        </form>
+    
+    </div>
+</div>
+
+
+</body>
+</html>
