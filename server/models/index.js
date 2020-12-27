@@ -19,3 +19,9 @@ module.exports = {
 
 require('./article');
 require('./user');
+
+sequelize.sync()
+.then(() => {
+    console.log('--DB WAS CONNECTED--');
+})
+.catch(err => console.log(err));

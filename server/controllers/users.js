@@ -1,44 +1,45 @@
 const db = require('../models');
-const {QueryTypes} = require('sequelize');
+const { QueryTypes } = require('sequelize');
 const bcrypt = require('bcryptjs');
+const { configs } = require('../config/config');
 
 const register = async function(req, res, next){
 
-    const candidateEmail = await db.sequelize.query(
-        `SELECT email FROM users WHERE email = $email`, {
-        bind: { 
-            email: req.body.email
-        },
-        type: QueryTypes.SELECT
-    });
-
-    const candidateName = await db.sequelize.query(
-        `SELECT name FROM users WHERE name = $name`, {
-        bind: {
-            name: req.body.name
-        },
-        type: QueryTypes.SELECT
-    });
-
-    if(candidateName.length){
-        //name is busy
-        res.status(401).json({
-            massage: 'Name is busy'
+    try{
+        const candidateEmail = await db.sequelize.query(
+            `SELECT email FROM users WHERE email = $email`, {
+            bind: { 
+                email: req.body.email
+            },
+            type: QueryTypes.SELECT
         });
-    }
-    else if(candidateEmail.length){
-        //email is busy
-        res.status(401).json({
-            massage: 'Email is busy'
+
+        const candidateName = await db.sequelize.query(
+            `SELECT name FROM users WHERE name = $name`, {
+            bind: {
+                name: req.body.name
+            },
+            type: QueryTypes.SELECT
         });
-    }
-    else{
 
-        const salt = bcrypt.genSaltSync(10);
-        const hash = bcrypt.hashSync(req.body.password, salt);
+        if(candidateName.length){
+            //name is busy
+            res.status(409).json({
+                massage: 'Name is busy'
+            });
+        }
+        else if(candidateEmail.length){
+            //email is busy
+            res.status(409).json({
+                massage: 'Email is busy'
+            });
+        }
+        else{
 
-        //register new
-        try{
+            const salt = bcrypt.genSaltSync(10);
+            const password = bcrypt.hashSync(req.body.password, salt);
+
+            //register new
             const user = await db.sequelize.query(
                 `INSERT INTO users (name, email, password)
                 VALUES ($name, $email, $password)`
@@ -46,7 +47,7 @@ const register = async function(req, res, next){
                 bind: {
                     name: req.body.name,
                     email: req.body.email,
-                    password: hash
+                    password: password
                 },
                 type: QueryTypes.INSERT
             });
@@ -56,49 +57,55 @@ const register = async function(req, res, next){
                 massage: 'User created'
             });
         }
-        catch(err){
-            console.log(err);
-            res.status(501).json({
-                massage: 'Server error. Try again later.'
-            })
-        }
+    }
+    catch(err){
+        err.massage = 'User were not created';
+        next(err);
     }
 };
 
-const login = async function(req, res){
+const login = async function(req, res, next){
 
-    const candidate = await db.sequelize.query(
-        `SELECT * FROM users WHERE email = $email`
-    ,{
-        bind: {
-            email: req.body.email,
-        },
-        type: QueryTypes.SELECT
-    });
+    try{
 
-
-
-    if(candidate.length){
-
-        const passwordResult = bcrypt.compareSync(req.body.password, candidate[0].password)
-        if(passwordResult){
-            res.status(200).json({
-                massage: 'login'
-            });
-        }
-        else{
-            res.status(401).json({
-                massage: 'invalid password'
-            });
-        }
-    }
-    
-    else{
-        res.status(404).json({
-            massage: 'user not found'
+        const candidate = await db.sequelize.query(
+            `SELECT * FROM users WHERE email = $email`
+        ,{
+            bind: {
+                email: req.body.email,
+            },
+            type: QueryTypes.SELECT
         });
+
+        if(candidate.length){
+
+            console.log(configs.secretKey);
+
+            const passwordResult = bcrypt.compareSync(req.body.password, candidate[0].password);
+
+            if(passwordResult){
+                req._userId = candidate[0].id;
+                next();
+            }
+            else{
+                res.status(401).json({
+                    massage: 'invalid password'
+                });
+            }
+        }
+            
+        else{
+            res.status(404).json({
+                massage: 'user not found'
+            });
+        }
+    }
+    catch(err){
+        err.massage = 'The user is not logged in.'
+        next(err);
     }
 };
+
 
 module.exports = {
     login,
