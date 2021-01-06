@@ -152,9 +152,22 @@ const follow = async function(req, res, next){
             type: QueryTypes.SELECT
         });
 
-        console.log(searchResult);
+        if(searchResult.length){
 
-        if(!searchResult.length){
+            await db.sequelize.query(`
+                DELETE FROM followers
+                WHERE "followerId" = $followerId
+                AND "userId" = $userId
+            `, {
+                bind: {
+                    followerId: req._userId,
+                    userId: req.body.followerId
+                },
+                type: QueryTypes.INSERT
+            });
+        
+        }
+        else{
 
             await db.sequelize.query(`
                 INSERT INTO followers ("followerId", "userId")
@@ -166,7 +179,7 @@ const follow = async function(req, res, next){
                 },
                 type: QueryTypes.INSERT
             });
-        
+
         };
 
         // res.status(200).json({
