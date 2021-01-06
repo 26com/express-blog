@@ -76,3 +76,7 @@
     cursor: pointer;
     z-index: 99;
 }
+
+.like{
+    color: red;
+}

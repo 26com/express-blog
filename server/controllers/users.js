@@ -111,8 +111,15 @@ const select = async function(req, res, next){
     try{
 
         const users = await db.sequelize.query(`
-            SELECT * FROM users
+            SELECT users.id, users.name, "userId", "followerId"
+            FROM users LEFT JOIN followers
+            ON users.id = "userId" AND "followerId" = $userId 
+            WHERE users.id != $userId
+            ORDER BY name
         `,{
+            bind: {
+                userId: req._userId
+            },
             type: QueryTypes.SELECT
         });
 
@@ -129,9 +136,58 @@ const select = async function(req, res, next){
 
 };
 
+const follow = async function(req, res, next){
+
+    try{
+
+        const searchResult = await db.sequelize.query(`
+            SELECT * FROM followers 
+            WHERE "followerId" = $followerId
+            AND "userId" = $userId
+        `, {
+            bind: {
+                userId: req.body.followerId,
+                followerId: req._userId
+            },
+            type: QueryTypes.SELECT
+        });
+
+        console.log(searchResult);
+
+        if(!searchResult.length){
+
+            await db.sequelize.query(`
+                INSERT INTO followers ("followerId", "userId")
+                VALUES ($followerId, $userId)
+            `, {
+                bind: {
+                    followerId: req._userId,
+                    userId: req.body.followerId
+                },
+                type: QueryTypes.INSERT
+            });
+        
+        };
+
+        // res.status(200).json({
+        //     massage: 'Follower was added'
+        // });
+
+        next();
+
+    }catch(err){
+
+        err.massage = 'Follower were not added.'
+        next(err);
+
+    }
+
+};
+
 
 module.exports = {
     login,
     register,
-    select
+    select,
+    follow
 };

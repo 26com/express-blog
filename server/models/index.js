@@ -19,6 +19,7 @@ module.exports = {
 
 require('./article');
 require('./user');
+require('./follower');
 
 sequelize.sync()
 .then(() => {
