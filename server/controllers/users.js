@@ -1,7 +1,6 @@
 const db = require('../models');
 const { QueryTypes } = require('sequelize');
 const bcrypt = require('bcryptjs');
-const { configs } = require('../config/config');
 
 const register = async function(req, res, next){
 
@@ -79,13 +78,13 @@ const login = async function(req, res, next){
 
         if(candidate.length){
 
-            console.log(configs.secretKey);
-
             const passwordResult = bcrypt.compareSync(req.body.password, candidate[0].password);
 
             if(passwordResult){
+
                 req._userId = candidate[0].id;
                 next();
+
             }
             else{
                 res.status(401).json({
@@ -106,7 +105,9 @@ const login = async function(req, res, next){
     }
 };
 
-const select = async function(req, res, next){
+const getUsersList = async function(req, res, next){
+
+    console.log(__dirname);
 
     try{
 
@@ -136,57 +137,55 @@ const select = async function(req, res, next){
 
 };
 
-const follow = async function(req, res, next){
+const subscribe = async function(req, res, next){
 
     try{
 
-        const searchResult = await db.sequelize.query(`
-            SELECT * FROM followers 
+
+        await db.sequelize.query(`
+            INSERT INTO followers ("followerId", "userId")
+            VALUES ($followerId, $userId)
+        `, {
+            bind: {
+                followerId: req._userId,
+                userId: req.body.followerId
+            },
+            type: QueryTypes.INSERT
+        });
+
+        res.status(200).json({
+            massage: 'Follower was added.'
+        });
+
+    }catch(err){
+
+        err.massage = 'Follower were not added.'
+        next(err);
+
+    }
+
+};
+
+const unsubscribe = async function(req, res, next){
+
+    try{
+
+
+        await db.sequelize.query(`
+            DELETE FROM followers
             WHERE "followerId" = $followerId
             AND "userId" = $userId
         `, {
             bind: {
-                userId: req.body.followerId,
-                followerId: req._userId
+                followerId: req._userId,
+                userId: req.body.followerId
             },
-            type: QueryTypes.SELECT
+            type: QueryTypes.DELETE
         });
 
-        if(searchResult.length){
-
-            await db.sequelize.query(`
-                DELETE FROM followers
-                WHERE "followerId" = $followerId
-                AND "userId" = $userId
-            `, {
-                bind: {
-                    followerId: req._userId,
-                    userId: req.body.followerId
-                },
-                type: QueryTypes.INSERT
-            });
-        
-        }
-        else{
-
-            await db.sequelize.query(`
-                INSERT INTO followers ("followerId", "userId")
-                VALUES ($followerId, $userId)
-            `, {
-                bind: {
-                    followerId: req._userId,
-                    userId: req.body.followerId
-                },
-                type: QueryTypes.INSERT
-            });
-
-        };
-
-        // res.status(200).json({
-        //     massage: 'Follower was added'
-        // });
-
-        next();
+        res.status(200).json({
+            massage: 'Follower was deleted.'
+        });
 
     }catch(err){
 
@@ -201,6 +200,7 @@ const follow = async function(req, res, next){
 module.exports = {
     login,
     register,
-    select,
-    follow
+    getUsersList,
+    subscribe,
+    unsubscribe
 };

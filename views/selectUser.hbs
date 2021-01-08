@@ -3,14 +3,7 @@
 <head>
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link rel="stylesheet" href="/css/font-awesome-4.7.0/css/font-awesome.min.css">
-    <script>
-        function follow(formId){
-
-            console.log(formId);
-            document.getElementById(formId).submit();
-
-        }
-    </script>
+    <script src='/js/subscribe.js'></script>
 </head>
 <body>
 
@@ -20,19 +13,20 @@
 
     <div class="content">
 
+        <ul>
+
         {{#each users}}
 
-        <form action="/users/select" method="post" class="" id={{this.id}}>
-
-                <input type="text" name="followerName" value="{{this.name}}" readonly>
-                <input type="text" name="followerId" value="{{this.id}}" hidden>
-                <i class="fa fa-heart
-                    {{#if this.followerId}} like{{/if}}
-                " aria-hidden="true" onclick="follow('{{this.id}}')"></i>
-
-        </form>
+            <li>
+                {{this.name}}
+                <i id="{{this.id}}" class="fa fa-heart
+                    {{#if this.followerId}} follow{{/if}}
+                " aria-hidden="true" onclick="subscribe('{{this.id}}')"></i>
+            </li>
 
         {{/each}}
+
+        </ul>
     
     </div>
 </div>
