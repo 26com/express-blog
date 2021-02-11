@@ -1,5 +1,5 @@
 const { app } = require('./server/config/express');
 
-app.listen(3000, ()=>{
+app.listen(4000, ()=>{
     console.log('--SERVER WAS STARTED--')
 });
