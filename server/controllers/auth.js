@@ -8,7 +8,7 @@ const getToken = function(req, res){
         const token = jwt.sign({
             id: req._userId,
             email: req.body.email
-        }, configs.secretKey, {expiresIn: '1h'});
+        }, configs.secretKey, {expiresIn: '6h'});
 
         res.cookie('token', token).status(200).json({
             massege: 'log in'
@@ -25,7 +25,7 @@ const signIn = function(req, res, next){
 
     try{
 
-        const token = req.cookies.token;
+        const token = req.headers.authorization;
         
         if(token){
             jwt.verify(token, configs.secretKey, (err, decoded)=>{

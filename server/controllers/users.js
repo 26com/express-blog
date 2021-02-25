@@ -107,25 +107,27 @@ const login = async function(req, res, next){
 
 const getUsersList = async function(req, res, next){
 
-    console.log(__dirname);
+    const inputValue = "%" + req.query.inputValue + "%"
 
     try{
 
         const users = await db.sequelize.query(`
-            SELECT users.id, users.name, "userId", "followerId"
+            SELECT users.id, users.name, followers.userid, followers.followerid
             FROM users LEFT JOIN followers
-            ON users.id = "userId" AND "followerId" = $userId 
+            ON users.id = followers.userid AND followers.followerid = $userId 
             WHERE users.id != $userId
+            AND users.name LIKE $inputValue
             ORDER BY name
         `,{
             bind: {
-                userId: req._userId
+                userId: req._userId,
+                inputValue
             },
             type: QueryTypes.SELECT
         });
 
-        res.status(200).render('selectUser.hbs',{
-            users: users
+        res.status(200).json({
+            data: users
         });
 
     }catch(err){
@@ -139,11 +141,13 @@ const getUsersList = async function(req, res, next){
 
 const subscribe = async function(req, res, next){
 
+    console.log("RUN SUBSCRIBE");
+
     try{
 
 
         await db.sequelize.query(`
-            INSERT INTO followers ("followerId", "userId")
+            INSERT INTO followers (followerid, userid)
             VALUES ($followerId, $userId)
         `, {
             bind: {
@@ -173,8 +177,8 @@ const unsubscribe = async function(req, res, next){
 
         await db.sequelize.query(`
             DELETE FROM followers
-            WHERE "followerId" = $followerId
-            AND "userId" = $userId
+            WHERE followerid = $followerId
+            AND userid = $userId
         `, {
             bind: {
                 followerId: req._userId,

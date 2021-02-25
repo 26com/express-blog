@@ -6,18 +6,16 @@ const getByUser = async function(req, res, next){
     try{
 
         const articles = await db.sequelize.query(
-            `SELECT * FROM articles WHERE "userId" = $userId ORDER BY Id DESC`, 
+            `SELECT articles.id, articles.title, articles.content, articles.createdat, users.name 
+            FROM articles 
+            LEFT JOIN followers on followers.followerid = $userId
+            AND articles.userid = followers.userid
+            JOIN users on articles.userid = users.id
+            where (followers.id != 0 or articles.userid = $userId)`, 
         {
-            bind: {userId: req.params.id},
+            bind: {userId: req._userId},
             type: QueryTypes.SELECT
         });
-
-        const userName = await db.sequelize.query(
-            `SELECT name FROM users WHERE id = $userId`, 
-            {
-                bind: {userId: req.params.id},
-                type: QueryTypes.SELECT
-            });
 
         function getNowDate(date){
             const nowDate = date.getDate();
@@ -27,8 +25,7 @@ const getByUser = async function(req, res, next){
         };
 
         articles.forEach(elem => {
-            elem.userName = userName[0].name;
-            elem.date = getNowDate(elem.createdAt);
+            elem.date = getNowDate(elem.createdat);
         });
 
         res.status(200).json({
@@ -46,7 +43,7 @@ const createNew = async function(req, res, next){
     try{
 
         await db.sequelize.query(
-            `INSERT INTO articles (title, content, "userId", "createdAt")
+            `INSERT INTO articles (title, content, userid, createdat)
             VALUES($title, $content, $userId, $date)`, 
         {
             bind: {
