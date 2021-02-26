@@ -11,7 +11,8 @@ const getByUser = async function(req, res, next){
             LEFT JOIN followers on followers.followerid = $userId
             AND articles.userid = followers.userid
             JOIN users on articles.userid = users.id
-            where (followers.id != 0 or articles.userid = $userId)`, 
+            where (followers.id != 0 or articles.userid = $userId)
+            ORDER BY articles.createdat DESC`, 
         {
             bind: {userId: req._userId},
             type: QueryTypes.SELECT
@@ -49,7 +50,7 @@ const createNew = async function(req, res, next){
             bind: {
                 title: req.body.title,
                 content: req.body.content,
-                userId: req.body.userId,
+                userId: req._userId,
                 date: new Date()
             },
             type: QueryTypes.INSERT
