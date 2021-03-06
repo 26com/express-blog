@@ -15,11 +15,11 @@ const Article = sequelize.define('article', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    createdAt: {
+    createdat: {
         type: DataTypes.DATE,
         allowNull: false
     },
-    userId: {
+    userid: {
         type: DataTypes.INTEGER,
         allowNull: false
     }

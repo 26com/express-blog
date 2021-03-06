@@ -24,13 +24,13 @@ const register = async function(req, res, next){
         if(candidateName.length){
             //name is busy
             res.status(409).json({
-                massage: 'Name is busy'
+                message: 'Name is busy'
             });
         }
         else if(candidateEmail.length){
             //email is busy
             res.status(409).json({
-                massage: 'Email is busy'
+                message: 'Email is busy'
             });
         }
         else{
@@ -53,17 +53,21 @@ const register = async function(req, res, next){
 
             res.status(201).json({
                 user: user,
-                massage: 'User created'
+                message: 'User created'
             });
         }
     }
     catch(err){
-        err.massage = 'User were not created';
+        err.message = 'User were not created';
         next(err);
     }
 };
 
 const login = async function(req, res, next){
+
+    req._email = req.query.email ? req.query.email : req._email;
+
+    console.log('EMAIL - ' + req._email);
 
     try{
 
@@ -71,16 +75,22 @@ const login = async function(req, res, next){
             `SELECT * FROM users WHERE email = $email`
         ,{
             bind: {
-                email: req.body.email,
+                email: req._email
             },
             type: QueryTypes.SELECT
         });
 
-        if(candidate.length){
+        if(!!candidate.length){
 
-            const passwordResult = bcrypt.compareSync(req.body.password, candidate[0].password);
+            if(!req._check_token){
+                const passwordResult = bcrypt.compareSync(req.query.password, candidate[0].password);
+                if(passwordResult){
+                    req._userId = candidate[0].id;
+                    next();
+                };
+            };
 
-            if(passwordResult){
+            if(req._check_token){
 
                 req._userId = candidate[0].id;
                 next();
@@ -88,19 +98,19 @@ const login = async function(req, res, next){
             }
             else{
                 res.status(401).json({
-                    massage: 'invalid password'
+                    message: 'invalid password'
                 });
             }
         }
             
         else{
             res.status(404).json({
-                massage: 'user not found'
+                message: 'user not found'
             });
         }
     }
     catch(err){
-        err.massage = 'The user is not logged in.'
+        err.message = 'The user is not register.'
         next(err);
     }
 };
@@ -132,7 +142,7 @@ const getUsersList = async function(req, res, next){
 
     }catch(err){
 
-        err.massage = 'Users were not selected.'
+        err.message = 'Users were not selected.'
         next(err);
 
     }
@@ -158,12 +168,12 @@ const subscribe = async function(req, res, next){
         });
 
         res.status(200).json({
-            massage: 'Follower was added.'
+            message: 'Follower was added.'
         });
 
     }catch(err){
 
-        err.massage = 'Follower were not added.'
+        err.message = 'Follower were not added.'
         next(err);
 
     }
@@ -188,12 +198,12 @@ const unsubscribe = async function(req, res, next){
         });
 
         res.status(200).json({
-            massage: 'Follower was deleted.'
+            message: 'Follower was deleted.'
         });
 
     }catch(err){
 
-        err.massage = 'Follower were not added.'
+        err.message = 'Follower were not added.'
         next(err);
 
     }

@@ -25,15 +25,6 @@ app.set('view engine', 'hbs');
 app.use(Express.static(__dirname + '/../../public'));
 hbs.registerPartials(__dirname + '/../../views/partials');
 
-// app.use((req, res, next) => {
-//     res.append('Access-Control-Allow-Origin', 'http://localhost:3000');
-//     res.append('Access-Control-Allow-Credentials', true);
-//     res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//     res.append('Access-Control-Allow-Headers', 'Content-Type,Authorization');
-//     res.status(200);
-//     next();
-// });
-
 app.use(cors());
 
 app.use(router);
@@ -43,7 +34,7 @@ app.use(function(err, req, res, next){
     res.status(err.status || 500);
     console.log('Error:: ', err);
     res.json({
-        massage: 'Error: ' + err.massage
+        message: 'Error: ' + err.message
     });
 });
 

@@ -8,11 +8,11 @@ const Follower = sequelize.define('follower', {
         primaryKey: true,
         allowNull: false
     },
-    userId: {
+    userid: {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    followerId: {
+    followerid: {
         type: Sequelize.INTEGER,
         allowNull: false
     }

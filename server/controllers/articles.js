@@ -34,7 +34,7 @@ const getByUser = async function(req, res, next){
         });
 
     }catch(err){
-        err.massage = 'Articles were not uploaded';
+        err.message = 'Articles were not uploaded';
         next(err);
     }
 };
@@ -58,11 +58,11 @@ const createNew = async function(req, res, next){
         
         // res.status(201).render('createForm.hbs');
         res.status(201).json({
-            massage: `Article ${req.body.title} was added`
+            message: `Article ${req.body.title} was added`
         });
 
     }catch(err){
-        err.massage = 'Article were not created';
+        err.message = 'Article were not created';
         next(err);
     }
 
