@@ -29,29 +29,27 @@ const getByUser = async function(req, res, next){
             return nowDate + '/' + nowMonth + '/' + nowYear;
         };
 
-        const articles =  await User.findOne({where: {id: req._userId}})
-        .then(user => user.getArticles()
-            .then(articles => {
-                articles.forEach(article => {
+        const user = await User.findOne({where: {id: req._userId}});
+        const articles = await user.getArticles();
+
+        articles.forEach(article => {
+            article.dataValues.date = getNowDate(article.dataValues.createdat);
+            article.dataValues.name = user.dataValues.name;
+        });
+
+        const followers = await Follower.findAll({where: {followerid: req._userId}});
+        
+        for(const follower of followers){
+            const user = await User.findOne({where: {id: follower.dataValues.userid}});
+            const userArticles = await user.getArticles();
+            if(userArticles.length){
+                for(const article of userArticles){
                     article.dataValues.date = getNowDate(article.dataValues.createdat);
                     article.dataValues.name = user.dataValues.name;
-                });
-                return articles;
-            })
-        );
-
-        await Follower.findAll({where: {followerid: req._userId}})
-        .then(async users => {
-            for (const user of users){
-                await Article.findAll({where: {userId: user.dataValues.userid}})
-                .then(res => {
-                    res.forEach(article => {
-                        rticle.dataValues.date = getNowDate(article.dataValues.createdat);
-                        articles.push(article);
-                    });
-                });
-            };
-        });
+                    articles.push(article);
+                }
+            }
+        };
 
         res.status(200).json({
             articles 
