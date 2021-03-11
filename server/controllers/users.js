@@ -67,8 +67,6 @@ const login = async function(req, res, next){
 
     req._email = req.query.email ? req.query.email : req._email;
 
-    console.log('EMAIL - ' + req._email);
-
     try{
 
         const candidate = await db.sequelize.query(
@@ -87,6 +85,7 @@ const login = async function(req, res, next){
                 if(passwordResult){
                     req._userId = candidate[0].id;
                     next();
+                    return;
                 };
             };
 
@@ -94,6 +93,7 @@ const login = async function(req, res, next){
 
                 req._userId = candidate[0].id;
                 next();
+                return;
 
             }
             else{

@@ -19,7 +19,7 @@ const Article = sequelize.define('article', {
         type: DataTypes.DATE,
         allowNull: false
     },
-    userid: {
+    userId: {
         type: DataTypes.INTEGER,
         allowNull: false
     }

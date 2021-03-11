@@ -11,7 +11,7 @@ const getToken = async function(req, res){
         const token = jwt.sign({
             id: req._userId,
             email: req._email
-        }, configs.secretKey, {expiresIn: '6h'});
+        }, configs.secretKey, {expiresIn: '300h'});
         
         await db.sequelize.query(
             `UPDATE users

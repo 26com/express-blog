@@ -1,5 +1,4 @@
 const {sequelize, Sequelize} = require('./index');
-const {Article} = require('./article');
 
 const User = sequelize.define('user', {
     id: {
@@ -24,8 +23,6 @@ const User = sequelize.define('user', {
         type: Sequelize.STRING
     }
 });
-
-User.hasMany(Article, {onDelete: 'cascade'});
 
 module.exports = {
     User

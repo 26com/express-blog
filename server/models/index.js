@@ -17,9 +17,12 @@ module.exports = {
     DataTypes
 };
 
-require('./article');
-require('./user');
-require('./follower');
+const { User } = require("./user");
+const { Article } = require("./article");
+const { Follower } = require("./follower");
+
+User.hasMany(Article, {onDelete: "cascade"});
+// User.hasMany(Follower, {onDelete: "cascade"});
 
 sequelize.sync()
 .then(() => {

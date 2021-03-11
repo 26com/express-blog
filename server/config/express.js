@@ -26,13 +26,14 @@ app.use(Express.static(__dirname + '/../../public'));
 hbs.registerPartials(__dirname + '/../../views/partials');
 
 app.use(cors());
+  
 
 app.use(router);
 
 //catch an error
 app.use(function(err, req, res, next){
     res.status(err.status || 500);
-    console.log('Error:: ', err);
+    console.log('Error::::::::: ', err);
     res.json({
         message: 'Error: ' + err.message
     });
