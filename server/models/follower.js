@@ -8,7 +8,7 @@ const Follower = sequelize.define('follower', {
         primaryKey: true,
         allowNull: false
     },
-    userid: {
+    userId: {
         type: Sequelize.INTEGER,
         allowNull: false
     },
@@ -17,8 +17,6 @@ const Follower = sequelize.define('follower', {
         allowNull: false
     }
 });
-
-// User.belongsToMany(User, {through: Follower});
 
 module.exports = {
     Follower

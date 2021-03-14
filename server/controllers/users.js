@@ -122,9 +122,9 @@ const getUsersList = async function(req, res, next){
     try{
 
         const users = await db.sequelize.query(`
-            SELECT users.id, users.name, followers.userid, followers.followerid
+            SELECT users.id, users.name, "userId", followers.followerid
             FROM users LEFT JOIN followers
-            ON users.id = followers.userid AND followers.followerid = $userId 
+            ON users.id = "userId" AND followers.followerid = $userId 
             WHERE users.id != $userId
             AND users.name LIKE $inputValue
             ORDER BY name
@@ -157,7 +157,7 @@ const subscribe = async function(req, res, next){
 
 
         await db.sequelize.query(`
-            INSERT INTO followers (followerid, userid)
+            INSERT INTO followers (followerid, "userId")
             VALUES ($followerId, $userId)
         `, {
             bind: {
@@ -188,7 +188,7 @@ const unsubscribe = async function(req, res, next){
         await db.sequelize.query(`
             DELETE FROM followers
             WHERE followerid = $followerId
-            AND userid = $userId
+            AND "userId" = $userId
         `, {
             bind: {
                 followerId: req._userId,

@@ -22,7 +22,10 @@ const { Article } = require("./article");
 const { Follower } = require("./follower");
 
 User.hasMany(Article, {onDelete: "cascade"});
-// User.hasMany(Follower, {onDelete: "cascade"});
+Article.belongsTo(User);
+
+User.hasMany(Follower, {onDelete: "cascade"});
+Follower.belongsTo(User);
 
 sequelize.sync()
 .then(() => {

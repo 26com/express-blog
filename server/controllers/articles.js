@@ -1,4 +1,4 @@
-const { QueryTypes } = require('sequelize');
+const { QueryTypes, Op } = require('sequelize');
 
 const db = require('../models');
 const { User } = require("../models/user");
@@ -29,27 +29,45 @@ const getByUser = async function(req, res, next){
             return nowDate + '/' + nowMonth + '/' + nowYear;
         };
 
-        const user = await User.findOne({where: {id: req._userId}});
-        const articles = await user.getArticles();
-
-        articles.forEach(article => {
-            article.dataValues.date = getNowDate(article.dataValues.createdat);
-            article.dataValues.name = user.dataValues.name;
-        });
-
-        const followers = await Follower.findAll({where: {followerid: req._userId}});
-        
-        for(const follower of followers){
-            const user = await User.findOne({where: {id: follower.dataValues.userid}});
-            const userArticles = await user.getArticles();
-            if(userArticles.length){
-                for(const article of userArticles){
-                    article.dataValues.date = getNowDate(article.dataValues.createdat);
+        function getArticles(users){
+            const articles = [];
+            for(user of users){
+                for(article of user.dataValues.articles){
+                    article.dataValues.date = getNowDate(article.createdat);
                     article.dataValues.name = user.dataValues.name;
                     articles.push(article);
                 }
             }
-        };
+            return articles;
+        }
+
+        const users = await User.findAll({
+            attributes: ["name"],
+            where: {
+                [Op.or]: [
+                    {"$followers.followerid$": req._userId},
+                    {id: req._userId}
+                ]
+            },
+            include: [
+                {
+                    model: Follower,
+                    attributes: [],
+                    required: false,
+                    where: {
+                        followerid: req._userId
+                    }
+                },
+                {
+                    model: Article,
+                    attributes: ["id", "title", "content", "createdat"]
+                }
+            ]
+        });
+
+        const articles = getArticles(users);
+
+        console.log(articles);
 
         res.status(200).json({
             articles 
