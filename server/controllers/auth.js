@@ -3,6 +3,7 @@ const { QueryTypes } = require('sequelize');
 
 const db = require('../models');
 const { configs } = require('../config/config');
+const { User } = require('../models/user');
 
 const getToken = async function(req, res){
 
@@ -13,18 +14,20 @@ const getToken = async function(req, res){
             email: req._email
         }, configs.secretKey, {expiresIn: '300h'});
         
-        await db.sequelize.query(
-            `UPDATE users
-            SET token = $token
-            WHERE id = $userId`,
-            {
-                bind: {
-                    token,
-                    userId: req._userId
-                },
-                type: QueryTypes.UPDATE
-            }
-        );
+        // await db.sequelize.query(
+        //     `UPDATE users
+        //     SET token = $token
+        //     WHERE id = $userId`,
+        //     {
+        //         bind: {
+        //             token,
+        //             userId: req._userId
+        //         },
+        //         type: QueryTypes.UPDATE
+        //     }
+        // );
+
+        await User.update({token}, {where: {id: req._userId}});
 
         res.status(200).json({
             token,
@@ -47,18 +50,25 @@ const signIn = function(req, res, next){
         if(token){
             jwt.verify(token, configs.secretKey, async (err, decoded)=>{
 
-                const lastToken = await db.sequelize.query(
-                    `SELECT token FROM users
-                    WHERE id = $userId`,
-                    {
-                        bind: {
-                            userId: decoded.id
-                        },
-                        type: QueryTypes.SELECT
-                    }
-                );
+                // const lastToken = await db.sequelize.query(
+                //     `SELECT token FROM users
+                //     WHERE id = $userId`,
+                //     {
+                //         bind: {
+                //             userId: decoded.id
+                //         },
+                //         type: QueryTypes.SELECT
+                //     }
+                // );
 
-                const checkToken = token === lastToken[0].token;
+                const lastToken = await User.findOne({
+                    attributes: ["token"],
+                    where: {
+                        id: decoded.id
+                    }
+                });
+
+                const checkToken = token === lastToken.dataValues.token;
 
                 if(err || !checkToken){
                     console.log(err);

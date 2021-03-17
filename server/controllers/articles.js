@@ -4,6 +4,7 @@ const db = require('../models');
 const { User } = require("../models/user");
 const { Follower } = require("../models/follower");
 const { Article } = require('../models/article');
+const { formatArticlesDate } = require('../utils/formatArticlesDate');
 
 const getByUser = async function(req, res, next){
 
@@ -21,53 +22,27 @@ const getByUser = async function(req, res, next){
         //     bind: {userId: req._userId},
         //     type: QueryTypes.SELECT
         // });
-        
-        function getNowDate(date){
-            const nowDate = date.getDate();
-            const nowMonth = Number(date.getMonth()) + 1;
-            const nowYear = date.getFullYear();
-            return nowDate + '/' + nowMonth + '/' + nowYear;
-        };
 
-        function getArticles(users){
-            const articles = [];
-            for(user of users){
-                for(article of user.dataValues.articles){
-                    article.dataValues.date = getNowDate(article.createdat);
-                    article.dataValues.name = user.dataValues.name;
-                    articles.push(article);
-                }
-            }
-            return articles;
-        }
-
-        const users = await User.findAll({
-            attributes: ["name"],
+        const result = await Article.findAll({
             where: {
                 [Op.or]: [
-                    {"$followers.followerid$": req._userId},
-                    {id: req._userId}
+                    {"$user.id$": req._userId},
+                    {"$user.followers.followerid$": req._userId}
                 ]
             },
-            include: [
-                {
+            attributes: ["id", "title", "content", "createdat"],
+            include: {
+                model: User,
+                attributes: ["name"],
+                include: {
                     model: Follower,
                     attributes: [],
-                    required: false,
-                    where: {
-                        followerid: req._userId
-                    }
-                },
-                {
-                    model: Article,
-                    attributes: ["id", "title", "content", "createdat"]
+                    required: false
                 }
-            ]
+            }
         });
 
-        const articles = getArticles(users);
-
-        console.log(articles);
+        const articles = formatArticlesDate(result);
 
         res.status(200).json({
             articles 
@@ -84,20 +59,28 @@ const createNew = async function(req, res, next){
 
     try{
 
-        await db.sequelize.query(
-            `INSERT INTO articles (title, content, userid, createdat)
-            VALUES($title, $content, $userId, $date)`, 
-        {
-            bind: {
-                title: req.body.title,
-                content: req.body.content,
-                userId: req._userId,
-                date: new Date()
-            },
-            type: QueryTypes.INSERT
+        // await db.sequelize.query(
+        //     `INSERT INTO articles (title, content, userid, createdat)
+        //     VALUES($title, $content, $userId, $date)`, 
+        // {
+        //     bind: {
+        //         title: req.body.title,
+        //         content: req.body.content,
+        //         userId: req._userId,
+        //         date: new Date()
+        //     },
+        //     type: QueryTypes.INSERT
+        // });
+
+        const article = await Article.create({
+            title: req.body.title,
+            content: req.body.content,
+            userId: req._userId,
+            createdat: new Date()
         });
-        
-        // res.status(201).render('createForm.hbs');
+
+        console.log(article);
+
         res.status(201).json({
             message: `Article ${req.body.title} was added`
         });
