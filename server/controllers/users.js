@@ -16,7 +16,7 @@ const register = async function(req, res, next){
         //     type: QueryTypes.SELECT
         // });
 
-        const candidateEmail = User.findOne({
+        const candidateEmail = await User.findOne({
             where: {
                 email: req.body.email
             }
@@ -30,7 +30,7 @@ const register = async function(req, res, next){
         //     type: QueryTypes.SELECT
         // });
 
-        const candidateName = User.findOne({
+        const candidateName = await User.findOne({
             where: {
                 email: req.body.name
             }
@@ -108,9 +108,9 @@ const login = async function(req, res, next){
         if(candidate){
 
             if(!req._check_token){
-                const passwordResult = bcrypt.compareSync(req.query.password, candidate[0].password);
+                const passwordResult = bcrypt.compareSync(req.query.password, candidate.dataValues.password);
                 if(passwordResult){
-                    req._userId = candidate[0].id;
+                    req._userId = candidate.dataValues.id;
                     next();
                     return;
                 };
@@ -118,7 +118,7 @@ const login = async function(req, res, next){
 
             if(req._check_token){
 
-                req._userId = candidate[0].id;
+                req._userId = candidate.dataValues.id;
                 next();
                 return;
 
@@ -165,7 +165,10 @@ const getUsersList = async function(req, res, next){
 
         const users = await User.findAll({
             where: {
-               id: {[Op.ne]: req._userId}
+                [Op.and]: [
+                    {id: {[Op.ne]: req._userId}},
+                    {name: {[Op.like]: inputValue}}
+                ]
             },
             attributes: ["id", "name"],
             include: {
